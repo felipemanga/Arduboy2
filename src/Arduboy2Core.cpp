@@ -189,6 +189,55 @@ void Arduboy2Core::bootPins()
   DDRF &= ~(_BV(A_BUTTON_BIT) | _BV(B_BUTTON_BIT) | _BV(RAND_SEED_IN_BIT));
   // Port F outputs (none)
   // Speaker: Not set here. Controlled by audio class
+#elif defined(AB_MCARD)
+
+  // Port B INPUT_PULLUP or HIGH
+  PORTB |= _BV(B_BUTTON_BIT) | _BV(PORTB2);
+  
+  // Port B INPUT or LOW (none)
+  // Port B inputs
+  DDRB &= ~(_BV(B_BUTTON_BIT));
+
+  // Port B outputs
+  DDRB |= _BV(SPI_MOSI_BIT) | _BV(SPI_SCK_BIT) | _BV(PORTB2);
+
+  // Port C INPUT_PULLUP or HIGH
+  PORTC |= _BV(LEFT_BUTTON_BIT)
+    | _BV(RIGHT_BUTTON_BIT)
+    | _BV(UP_BUTTON_BIT)
+    | _BV(DOWN_BUTTON_BIT);
+
+  // Port C INPUT or LOW (none)
+  PORTC &= ~(_BV(RAND_SEED_IN_BIT));
+  
+  // Port C inputs
+  DDRC &= ~(
+	    _BV(RIGHT_BUTTON_BIT) |
+	    _BV(LEFT_BUTTON_BIT) |
+	    _BV(UP_BUTTON_BIT) |
+	    _BV(DOWN_BUTTON_BIT) |
+	    _BV(RAND_SEED_IN_BIT)
+	    );
+  
+  // Port C outputs (none)
+
+  // Port D INPUT_PULLUP or HIGH
+  PORTD |= _BV(CS_BIT) | _BV(A_BUTTON_BIT);
+  
+  // Port D INPUT or LOW
+  // Port D inputs
+  DDRD &= ~(_BV(A_BUTTON_BIT) | _BV(RST_BIT));
+
+  // Port D outputs
+  DDRD |= _BV(CS_BIT) | _BV(DC_BIT) | _BV(RST_BIT);
+
+  // Port E (none)
+  // Port F INPUT_PULLUP or HIGH
+  // Port F INPUT or LOW
+  // Port F inputs
+  // Port F outputs (none)
+  // Speaker: Not set here. Controlled by audio class
+  
 
 #endif
 }
@@ -248,8 +297,9 @@ void Arduboy2Core::safeMode()
 {
   if (buttonsState() == UP_BUTTON)
   {
+#ifndef AB_MCARD      
     digitalWriteRGB(RED_LED, RGB_ON);
-
+#endif
 #ifndef ARDUBOY_CORE // for Arduboy core timer 0 should remain enabled
     // prevent the bootloader magic number from being overwritten by timer 0
     // when a timer variable overlaps the magic number location
@@ -272,11 +322,13 @@ void Arduboy2Core::idle()
 
 void Arduboy2Core::bootPowerSaving()
 {
+  #ifndef AB_MCARD
   // disable Two Wire Interface (I2C) and the ADC
   // All other bits will be written with 0 so will be enabled
   PRR0 = _BV(PRTWI) | _BV(PRADC);
   // disable USART1
   PRR1 |= _BV(PRUSART1);
+  #endif
 }
 
 // Shut down the display
@@ -548,6 +600,11 @@ uint8_t Arduboy2Core::buttonsState()
   if (bitRead(A_BUTTON_PORTIN, A_BUTTON_BIT) == 0) { buttons |= A_BUTTON; }
   // B
   if (bitRead(B_BUTTON_PORTIN, B_BUTTON_BIT) == 0) { buttons |= B_BUTTON; }
+
+#elif defined(AB_MCARD)
+  buttons = ((~PINC) & B00001111);
+  buttons = buttons | ((~PIND) & B10000000);
+  buttons = buttons | (((~PINB) & B00000001) << 6);
 #endif
 
   return buttons;

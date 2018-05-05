@@ -119,6 +119,30 @@
 #define SPEAKER_2_PORT PORTC
 #define SPEAKER_2_DDR DDRC
 #define SPEAKER_2_BIT PORTC7
+
+// ----- Pins common on Arduboy and DevKit -----
+
+// Unconnected analog input used for noise by initRandomSeed()
+#define RAND_SEED_IN A4
+#define RAND_SEED_IN_PORT PORTF
+#define RAND_SEED_IN_BIT PORTF1
+// Value for ADMUX to read the random seed pin: 2.56V reference, ADC1
+#define RAND_SEED_IN_ADMUX (_BV(REFS0) | _BV(REFS1) | _BV(MUX0))
+
+// SPI interface
+#define SPI_MISO_PORT PORTB
+#define SPI_MISO_BIT PORTB3
+
+#define SPI_MOSI_PORT PORTB
+#define SPI_MOSI_BIT PORTB2
+
+#define SPI_SCK_PORT PORTB
+#define SPI_SCK_BIT PORTB1
+
+#define SPI_SS_PORT PORTB
+#define SPI_SS_BIT PORTB0
+// --------------------
+
 // -----------------------
 
 // ----- DevKit pins -----
@@ -205,9 +229,6 @@
 //
 // Reference: https://github.com/Arduboy/Arduboy/issues/108
 
-#endif
-// --------------------
-
 // ----- Pins common on Arduboy and DevKit -----
 
 // Unconnected analog input used for noise by initRandomSeed()
@@ -230,6 +251,93 @@
 #define SPI_SS_PORT PORTB
 #define SPI_SS_BIT PORTB0
 // --------------------
+
+
+// ----- MicroCard pins -----
+#elif defined(AB_MCARD)
+
+#define PIN_CS 2        // Display CS Arduino pin number
+#define CS_PORT PORTD   // Display CS port
+#define CS_BIT PORTD2   // Display CS physical bit number
+
+#define PIN_DC 6        // Display D/C Arduino pin number
+#define DC_PORT PORTD   // Display D/C port
+#define DC_BIT PORTD6   // Display D/C physical bit number
+
+#define PIN_RST 3       // Display reset Arduino pin number
+#define RST_PORT PORTD  // Display reset port
+#define RST_BIT PORTD3  // Display reset physical bit number
+
+#define SPI_MOSI_PORT PORTB
+#define SPI_MOSI_BIT PORTB3
+
+#define SPI_SCK_PORT PORTB
+#define SPI_SCK_BIT PORTB5
+
+// microcard has no LEDs
+/*
+#define RED_LED 0
+#define GREEN_LED 0
+#define BLUE_LED 0
+
+#define BLUE_LED_PORT PORTD
+#define BLUE_LED_BIT PORTD0
+*/
+
+// bit values for button states
+// these are determined by the buttonsState() function
+#define LEFT_BUTTON _BV(3)
+#define RIGHT_BUTTON _BV(0)
+#define UP_BUTTON _BV(2)
+#define DOWN_BUTTON _BV(1)
+#define A_BUTTON _BV(7)
+#define B_BUTTON _BV(6)
+
+// pin values for buttons, probably shouldn't use these
+#define PIN_LEFT_BUTTON 17
+#define LEFT_BUTTON_PORT PORTC
+#define LEFT_BUTTON_BIT PORTC3
+
+#define PIN_RIGHT_BUTTON 14
+#define RIGHT_BUTTON_PORT PORTC
+#define RIGHT_BUTTON_BIT PORTC0
+
+#define PIN_UP_BUTTON 16
+#define UP_BUTTON_PORT PORTC
+#define UP_BUTTON_BIT PORTC2
+
+#define PIN_DOWN_BUTTON 15
+#define DOWN_BUTTON_PORT PORTC
+#define DOWN_BUTTON_BIT PORTC1
+
+#define PIN_A_BUTTON 7
+#define A_BUTTON_PORT PORTD
+#define A_BUTTON_BIT PORTD7
+
+#define PIN_B_BUTTON 8
+#define B_BUTTON_PORT PORTB
+#define B_BUTTON_BIT PORTB0
+
+#define PIN_SPEAKER_1 4
+#define SPEAKER_1_PORT PORTD
+#define SPEAKER_1_DDR DDRD
+#define SPEAKER_1_BIT PORTD4
+
+#define PIN_SPEAKER_2 5
+#define SPEAKER_1_PORT PORTD
+#define SPEAKER_1_DDR DDRD
+#define SPEAKER_1_BIT PORTD5
+
+#define RAND_SEED_IN A4 // Open analog input used for noise by initRandomSeed()
+#define RAND_SEED_IN_PORTC
+#define RAND_SEED_IN_BIT PORTC4
+// Value for ADMUX to read the random seed pin: 2.56V reference, ADC1
+#define RAND_SEED_IN_ADMUX (_BV(REFS0) | _BV(REFS1) | _BV(MUX0))
+
+#endif
+
+// --------------------
+
 
 // OLED hardware (SSD1306)
 
